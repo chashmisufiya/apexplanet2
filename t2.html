@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact & To-Do App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(-45deg, #f0f4f8, #e6edf5, #f7e9f0, #e9f7f4);
+        background-size: 400% 400%;
+        animation: gradientBG 20s ease infinite;
+        color: #333;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    header {
+        background: rgba(74, 111, 165, 0.9);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        font-size: 1.5rem;
+        border-bottom: 2px solid #fff;
+    }
+
+    main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+        flex: 1;
+    }
+
+    section {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    section:hover {
+        transform: translateY(-3px);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #4a6fa5;
+    }
+
+    input, button, textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    button {
+        background: #4a6fa5;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    button:hover {
+        background: #3a5d87;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        background: #d9e6f2;
+        padding: 8px 12px;
+        margin: 5px 0;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    li span {
+        flex-grow: 1;   /* Task text expands */
+        word-break: break-word;
+    }
+
+    .remove {
+        flex-shrink: 0;   /* Button stays small */
+        background: #d9534f;
+        border: none;
+        padding: 4px 6px;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+        width: 30px;
+        text-align: center;
+    }
+
+    .remove:hover {
+        background: #c9302c;
+    }
+
+    .suggestions {
+        font-size: 0.9rem;
+        color: #444;
+        background: #f0f7ff;
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 8px;
+    }
+</style>
+</head>
+<body>
+
+<header>📌 Contact Form & To-Do List</header>
+
+<main>
+    <!-- Contact Form -->
+    <section>
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" rows="4" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <!-- To-Do List -->
+    <section>
+        <h2>To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="Enter new task...">
+        <button id="addTask">Add Task</button>
+        <div class="suggestions">
+            💡 <b>Suggestions:</b> Wake up at 6:30 AM, Complete assignment, Water the plants, Call a friend, Read a book
+        </div>
+        <ul id="taskList"></ul>
+    </section>
+</main>
+
+<script>
+    // To-Do List Functionality
+    const taskList = document.getElementById("taskList");
+    document.getElementById("addTask").addEventListener("click", function() {
+        let taskValue = document.getElementById("taskInput").value.trim();
+        if (taskValue === "") {
+            alert("Please enter a task.");
+            return;
+        }
+
+        let li = document.createElement("li");
+
+        let taskText = document.createElement("span");
+        taskText.textContent = taskValue;
+
+        let removeBtn = document.createElement("button");
+        removeBtn.textContent = "❌";
+        removeBtn.classList.add("remove");
+        removeBtn.onclick = function() {
+            li.remove();
+        };
+
+        li.appendChild(taskText);
+        li.appendChild(removeBtn);
+        taskList.appendChild(li);
+
+        document.getElementById("taskInput").value = "";
+    });
+
+    // Contact Form Validation
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let name = document.getElementById("name").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let message = document.getElementById("message").value.trim();
+
+        // Name format validation
+        let namePattern = /^[A-Za-z ]{3,}$/;
+        if (!namePattern.test(name)) {
+            alert("Name should be at least 3 characters and only contain letters and spaces.");
+            return;
+        }
+
+        // Email domain validation
+        let emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|outlook|hotmail)\.com$/;
+        if (!emailPattern.test(email)) {
+            alert("Please enter a valid email from gmail.com, yahoo.com, outlook.com, or hotmail.com");
+            return;
+        }
+
+        if (message.length < 10) {
+            alert("Message should be at least 10 characters long.");
+            return;
+        }
+
+        // Check if at least one task exists
+        if (taskList.children.length === 0) {
+            alert("Please add at least one task to your To-Do list before submitting.");
+            return;
+        }
+
+        alert("Form submitted successfully!");
+        
+        // Reset form and To-Do list
+        this.reset();
+        taskList.innerHTML = "";
+    });
+</script>
+
+</body>
+</html>
